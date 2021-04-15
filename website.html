@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+    <head>
+        <title>
+           Vanessas Website
+        </title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <style>
+            h1 {
+                background-color: lightblue;
+                border: 1px solid rgb(250, 246, 5);
+                color: mediumblue;
+            }
+            h3 {
+                background-color: rgb(238, 238, 127);
+                border: 1px solid mediumblue;
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+                color: rgb(98, 98, 206) 
+            }
+            .primary-color {
+                background-color: rgb(0, 255, 76);
+            }
+            .primary-color:hover {
+                background-color:  rgb(143, 240, 172);
+                border-color: rgb(0, 255, 76);
+            }
+            .secondary-color {
+                background-color: rgb(250, 10, 10);
+            }
+            .secondary-color:hover {
+                background-color:  rgb(243, 142, 142);
+                border-color:  rgb(250, 10, 10);
+            }
+            .button-base {
+                border-radius: 7px;
+                padding: 30px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+            @font-face {
+                font-family: "hashedbrowns";
+                src: url(HashedBrowns-WyJgn.ttf);
+            }
+            h1 {
+                letter-spacing: 10px;
+                font-weight: 100;
+                font-style: italic;
+            }
+            body{
+                font-family: "hashedbrowns";
+            }
+            table tr th:nth-child(1) {
+                background-color: rgb(161, 235, 235);
+            }
+            table tr td:nth-child(2) {
+                background-color: rgb(210, 230, 230);
+            }
+            .grosses-div {
+                background-color: darkorchid;
+                width: 800px;
+                height: 200px
+            }
+            .bild-hund {
+              width: 50x;
+              height: 50px;
+              border-radius: 6px;
+              background-image: linear-gradient(to left bottom, rgb(192, 66, 223), lightblue, lightpink);
+            }
+            body{
+                margin: 0 auto;
+                text-align: center;
+            }
+            table{
+                margin: 0 auto;
+                text-align: center;
+            }
+            body{
+                background-color: rgb(245, 184, 161);
+            }
+            .blue {
+                background-color: lightblue;
+            }
+            .pink {
+                background-color: lightpink;
+            }
+        </style>
+        <script>
+            $('document').ready(() => {
+               let meinButton = $('#mein-button')
+               let kommentarContainer = $('#kommentar-container')
+               let counterContainer = $('#kommentar-counter')
+               let textField = $('#text-field')
+               let nameField = $('#name-field')
+
+               let kommentarWurdeGeadded = false
+               let counter = 0
+
+               let backendUrl = 'https://simon-guestbook-backend.herukoapp.com/greetings/simon'
+
+               axios.get(backendUrl)
+                    .then(response => {
+                        counterContainer.text(`Kommentare vom Backend: ${response.data.length}`)
+
+                        response.data.forEach(kommentar => {
+                            kommentarContainer.append(`
+                                <div class='kommentare'>${kommentar.user} hat gesagt: ${kommentar.greeting} und hat ${kommentar.likes}
+                            `)
+                        });
+                    })
+
+               meinButton.click(() => {
+                   counter = counter + 1
+                   let aktuellerText = textField.val()
+                   let aktuellerName = nameField.val()
+
+                   axios.post(backendUrl, {
+                       greeting: aktuellerText,
+                       user: aktuellerName
+                   })
+
+                   if (counter > 5) {
+                      counterContainer.removeClass('blue')
+                      counterContainer.addClass('pink')
+                   }
+                   if (!kommentarWurdeGeadded) {
+                       kommentarContainer.empty()
+                       kommentarWurdeGeadded = true
+                   }
+
+                   kommentarContainer.append(`
+                    <div class="kommentare">
+                        ${aktuellerName} hat geschrieben: ${aktuellerText} <button>löschen</button>
+                    </div>`)
+                    counterContainer.text(`Kommentare: ${counter}`)
+
+               })
+            })
+        </script>
+       
+    </head>
+    <body>
+      
+        <h1>Willkommen</h1> 
+        <h3>Mein Name ist Vanessa Boller</h3>
+        <img src="Bild Ich.jpg" width="200" height="250"><img/>
+       
+        
+        <table>
+            <tr>
+                <th>Facts about me</th>
+                <td><ul>
+                    <li>20 Jahre</li>
+                    <li>Fsj in einer Schule für körperbehinderte Kinder</li>
+                    <li>nach dem Fsj: Ausbildung zur Ergotherpeutin</li>
+                </ul></td>
+            </tr>
+            <tr>
+                <th>Hobbies</th>
+                <td><ul>
+                    <li>Turnen</li>
+                    <li>Volleyball</li>
+                    <li>Malen</li>
+                </ul></td>
+            </tr>
+          </table>
+
+        <br/>
+        <button class="primary-color button-base">
+            Diese Seite gefällt mir
+        </button>
+
+        <button class="secondary-color button-base">
+            Diese Seite gefällt mir nicht
+        </button>
+        <br/>
+        <br/>
+        <div>Name:</div>
+        <input type= 'name' id='name-field'>
+        <br/>
+        <div>Kommentar:</div>
+        <input type='text' id='text-field'>
+        <br/>
+        <button id="mein-button">
+            Adde Kommentar
+        </button>
+
+        <div id="kommentar-counter">
+            Kommentare: 0
+        </div>
+
+        <div id="kommentar-container">
+            keine Kommentare bis jetzt
+        </div>
+
+        <div class="bild-hund">
+        </div>
+
+   
+    </body>
+</html>
